@@ -44,6 +44,8 @@ namespace Artisan
             Service.Framework.Update += FireBot;
             ActionWatching.Enable();
             StepChanged += ResetRecommendation;
+
+            UiHelper.Setup(Service.SigScanner);
         }
 
         public Artisan()

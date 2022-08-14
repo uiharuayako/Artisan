@@ -433,7 +433,6 @@ namespace Artisan.CraftingLogic
                 return CharacterInfo.HighestLevelTouch();
             }
 
-            if (CanUse(Skills.CarefulSynthesis)) return Skills.CarefulSynthesis;
             return CharacterInfo.HighestLevelSynth();
         }
         public static uint GetRecommendation()
@@ -441,7 +440,7 @@ namespace Artisan.CraftingLogic
             if (CanFinishCraft()) return CharacterInfo.HighestLevelSynth();
 
             if (CanUse(Skills.TrainedEye) && (HighQualityPercentage < Service.Configuration.MaxPercentage || Recipe.ItemResult.Value.IsCollectable) && Recipe.CanHq) return Skills.TrainedEye;
-            if (CanUse(Skills.Tricks) && ((CurrentCondition == Condition.Good && Service.Configuration.UseTricksGood) || (CurrentCondition == Condition.Excellent && Service.Configuration.UseTricksExcellent))) return Skills.Tricks;
+            bool useTricks = CanUse(Skills.Tricks) && ((CurrentCondition == Condition.Good && Service.Configuration.UseTricksGood) || (CurrentCondition == Condition.Excellent && Service.Configuration.UseTricksExcellent));
 
             if (MaxQuality == 0 || Service.Configuration.MaxPercentage == 0 || !Recipe.CanHq)
             {
@@ -459,6 +458,7 @@ namespace Artisan.CraftingLogic
                     if (CurrentStep == 1 && CanUse(Skills.MuscleMemory)) return Skills.MuscleMemory;
                     if (CurrentStep == 2 && CanUse(Skills.FinalAppraisal) && !JustUsedFinalAppraisal && CalculateNewProgress(CharacterInfo.HighestLevelSynth()) >= MaxProgress) return Skills.FinalAppraisal;
                     if (GetStatus(Buffs.MuscleMemory) != null) return CharacterInfo.HighestLevelSynth();
+                    if (useTricks) return Skills.Tricks;
                     if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation) && Service.Configuration.UseSpecialist) return Skills.CarefulObservation;
                     if (CurrentCondition == Condition.Poor && CanUse(Skills.Observe)) return Skills.Observe;
                     if (GreatStridesByregotCombo() >= MaxQuality && GetStatus(Buffs.GreatStrides) is null && CanUse(Skills.GreatStrides)) return Skills.GreatStrides;
@@ -477,6 +477,7 @@ namespace Artisan.CraftingLogic
                 if (CurrentQuality < MaxQuality && (HighQualityPercentage < Service.Configuration.MaxPercentage || Recipe.ItemResult.Value.IsCollectable || Recipe.IsExpert))
                 {
                     if (CurrentStep == 1 && CanUse(Skills.Reflect)) return Skills.Reflect;
+                    if (useTricks) return Skills.Tricks;
                     if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation) && Service.Configuration.UseSpecialist) return Skills.CarefulObservation;
                     if (CurrentCondition == Condition.Poor && CanUse(Skills.Observe)) return Skills.Observe;
                     if (!ManipulationUsed && GetStatus(Buffs.Manipulation) is null && CanUse(Skills.Manipulation)) return Skills.Manipulation;

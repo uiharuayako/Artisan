@@ -9,5 +9,5 @@
   "Tags": [
     "crafting"
   ],
-  "Changelog":  "- Fix progress calculations."
+  "Changelog":  "- Fixed issues with Tricks of the Trade overriding Final Appraisal choice."
 }

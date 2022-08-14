@@ -4,10 +4,11 @@ using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Artisan.RawInformation
 {
-    internal class AtkResNodeFunctions
+    internal unsafe class AtkResNodeFunctions
     {
         public unsafe static void DrawOutline(AtkResNode* node)
         {
@@ -21,29 +22,61 @@ namespace Artisan.RawInformation
             ImGui.GetForegroundDrawList(ImGuiHelpers.MainViewport).AddRect(position, position + size, 0xFFFFFF00, 0, ImDrawFlags.RoundCornersAll, 8);
         }
 
-        public unsafe static void DrawSuccessRate(AtkResNode* node, string str, string itemName, bool isMainWindow = false)
+        public unsafe static void DrawSuccessRate(AtkComponentNode* node, AtkTextNode* textNode, string str, string itemName, uint recipeID, bool isMainWindow = false)
         {
-            var position = GetNodePosition(node);
-            var scale = GetNodeScale(node);
-            var size = new Vector2(node->Width, node->Height) * scale;
-            var center = new Vector2((position.X + size.X) / 2, (position.Y - size.Y) / 2);
+            AtkTextNode* clonedNode = null;
 
-            position += ImGuiHelpers.MainViewport.Pos;
+            for (var i = 1; i < node->Component->UldManager.NodeListCount; i++)
+            {
+                var n = node->Component->UldManager.NodeList[i];
+                if (n->Type == NodeType.Text && n->NodeID == recipeID)
+                {
+                    clonedNode = (AtkTextNode*)n;
+                    break;
+                }
+            }
 
-            ImGuiHelpers.ForceNextWindowMainViewport();
-            var textSize = ImGui.CalcTextSize(str);
-            if (isMainWindow)
-                ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(position.X + 5f, position.Y));
-            else
-            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(position.X, position.Y + (node->Height - textSize.Y)));
-            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(2f, 0f));
-            ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(0f, 0f));
-            ImGui.Begin($"###EHQ{itemName}{node->NodeID}", ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoScrollbar
-                | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoNavFocus
-                | ImGuiWindowFlags.AlwaysUseWindowPadding | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoSavedSettings);
-            ImGui.TextUnformatted(str);
-            ImGui.End();
-            ImGui.PopStyleVar(2);
+            if (!Service.Configuration.ShowEHQ)
+            {
+                clonedNode->AtkResNode.ToggleVisibility(false);
+                return;
+            }
+
+            if (clonedNode == null)
+            {
+                clonedNode = UiHelper.CloneNode(textNode);
+                clonedNode->AtkResNode.NodeID = recipeID;
+                var newStrPtr = UiHelper.Alloc(512);
+                clonedNode->NodeText.StringPtr = (byte*)newStrPtr;
+                clonedNode->NodeText.BufSize = 512;
+                UiHelper.ExpandNodeList(node, 1);
+
+                node->Component->UldManager.NodeList[node->Component->UldManager.NodeListCount++] = (AtkResNode*)clonedNode;
+
+                clonedNode->AtkResNode.ParentNode = (AtkResNode*)node;
+                clonedNode->AtkResNode.ChildNode = null;
+                textNode->AtkResNode.PrevSiblingNode = (AtkResNode*)clonedNode;
+                clonedNode->AtkResNode.NextSiblingNode = (AtkResNode*)textNode;
+
+                clonedNode->AlignmentFontType = (byte)AlignmentType.BottomRight;
+            }
+
+            node->Component->UldManager.UpdateDrawNodeList();
+            node->Component->UldManager.NodeList[6]->ToggleVisibility(false);
+            node->Component->UldManager.NodeList[8]->ToggleVisibility(false);
+            UiHelper.SetPosition(clonedNode,-50, -3);
+            UiHelper.SetSize(clonedNode, node->AtkResNode.Width, node->AtkResNode.Height);
+            clonedNode->AtkResNode.ToggleVisibility(true);
+            clonedNode->SetText(str);
+            clonedNode->TextColor.A = 255;
+            clonedNode->TextColor.R = 255;
+            clonedNode->TextColor.G = 255;
+            clonedNode->TextColor.B = 255;
+            clonedNode->TextFlags = 157;
+            clonedNode->ResizeNodeForCurrentText();
+            textNode->ResizeNodeForCurrentText();
+            textNode->TextFlags2 = 0;
+
         }
 
         public static unsafe Vector2 GetNodePosition(AtkResNode* node)
