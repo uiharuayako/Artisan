@@ -1,27 +1,32 @@
-﻿using System;
+﻿using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Action = Lumina.Excel.GeneratedSheets.Action;
 
 namespace Artisan.RawInformation
 {
     public class LuminaSheets
     {
-        
-        public static Dictionary<uint, Lumina.Excel.GeneratedSheets.Recipe>? RecipeSheet = Service.DataManager?.GetExcelSheet<Lumina.Excel.GeneratedSheets.Recipe>()?
+
+        public static Dictionary<uint, Recipe>? RecipeSheet = Service.DataManager?.GetExcelSheet<Recipe>()?
             .ToDictionary(i => i.RowId, i => i);
 
-        public static Dictionary<uint, Lumina.Excel.GeneratedSheets.Action>? ActionSheet = Service.DataManager?.GetExcelSheet<Lumina.Excel.GeneratedSheets.Action>()?
+        public static Dictionary<uint, Action>? ActionSheet = Service.DataManager?.GetExcelSheet<Action>()?
             .ToDictionary(i => i.RowId, i => i);
 
-        public static Dictionary<uint, Lumina.Excel.GeneratedSheets.CraftAction>? CraftActions = Service.DataManager?.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftAction>()?
+        public static Dictionary<uint, CraftAction>? CraftActions = Service.DataManager?.GetExcelSheet<CraftAction>()?
             .ToDictionary(i => i.RowId, i => i);
 
-        public static Dictionary<uint, Lumina.Excel.GeneratedSheets.CraftLevelDifference>? CraftLevelDifference = Service.DataManager?.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLevelDifference>()?
+        public static Dictionary<uint, CraftLevelDifference>? CraftLevelDifference = Service.DataManager?.GetExcelSheet<CraftLevelDifference>()?
             .ToDictionary(i => i.RowId, i => i);
 
-        public static Dictionary<uint, Lumina.Excel.GeneratedSheets.RecipeLevelTable>? RecipeLevelTableSheet = Service.DataManager?.GetExcelSheet<Lumina.Excel.GeneratedSheets.RecipeLevelTable>()?
-    .ToDictionary(i => i.RowId, i => i);
+        public static Dictionary<uint, RecipeLevelTable>? RecipeLevelTableSheet = Service.DataManager?.GetExcelSheet<RecipeLevelTable>()?
+            .ToDictionary(i => i.RowId, i => i);
+
+        public static Dictionary<uint, ItemFood>? ItemFoodSheet = Service.DataManager?.GetExcelSheet<ItemFood>()?
+            .ToDictionary(i => i.RowId, i => i);
+
+        public static Dictionary<uint, Item>? ItemSheet = Service.DataManager?.GetExcelSheet<Item>()?
+           .ToDictionary(i => i.RowId, i => i);
     }
 }

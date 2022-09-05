@@ -84,6 +84,8 @@ namespace Artisan.Autocraft
                 ImGui.Text($"Current Step: {CurrentCraft.CurrentStep}");
                 ImGui.Text($"GS+ByregotCombo: {CurrentCraft.GreatStridesByregotCombo()}");
                 ImGui.Text($"Predicted Quality: {CurrentCraft.CalculateNewQuality(CurrentCraft.CurrentRecommendation)}");
+                ImGui.Text($"Food Buff Param: {Service.ClientState?.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.Param}");
+                ImGui.Text($"Pt Buff Param: {Service.ClientState?.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 49)?.Param}");
             }
             ImGui.Separator();
 

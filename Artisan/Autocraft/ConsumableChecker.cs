@@ -1,8 +1,7 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using Artisan.RawInformation;
 using Dalamud.Utility.Signatures;
 using ECommons;
 using ECommons.DalamudServices;
-using ECommons.Schedulers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -11,8 +10,6 @@ using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Artisan.Autocraft
 {
@@ -68,12 +65,53 @@ namespace Artisan.Autocraft
 
         internal static bool IsFooded()
         {
-            return Svc.ClientState.LocalPlayer?.StatusList.Any(x => x.GameData.Name.ToString() == "Well Fed" && x.RemainingTime > 0f) == true;
+            if (Service.ClientState.LocalPlayer is null) return false;
+
+            return IsCorrectFood();
         }
 
+        internal static bool IsCorrectFood()
+        {
+            if (Service.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48 && x.RemainingTime > 0f))
+            {
+                var foodBuff = Service.ClientState.LocalPlayer.StatusList.First(x => x.StatusId == 48 && x.RemainingTime > 0f);
+                var desiredFood = LuminaSheets.ItemSheet[Service.Configuration.Food].ItemAction.Value;
+                var itemFood = Service.Configuration.FoodHQ ? LuminaSheets.ItemFoodSheet[desiredFood.DataHQ[1]] : LuminaSheets.ItemFoodSheet[desiredFood.Data[1]];
+                if (foodBuff.Param != (itemFood.RowId + (Service.Configuration.FoodHQ ? 10000 : 0)))
+                {
+                    DuoLog.Error("Food buff does not match desired food.");
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
         internal static bool IsPotted()
         {
-            return Svc.ClientState.LocalPlayer?.StatusList.Any(x => x.GameData.Name.ToString() == "Medicated" && x.RemainingTime > 0f) == true;
+            if (Service.ClientState.LocalPlayer is null) return false;
+
+            return IsCorrectPot();
+        }
+
+        private static bool IsCorrectPot()
+        {
+            if (Service.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 49 && x.RemainingTime > 0f))
+            {
+                var potBuff = Service.ClientState.LocalPlayer.StatusList.First(x => x.StatusId == 49 && x.RemainingTime > 0f);
+                var desiredPot = LuminaSheets.ItemSheet[Service.Configuration.Potion].ItemAction.Value;
+                var itemPot = Service.Configuration.PotHQ ? LuminaSheets.ItemFoodSheet[desiredPot.DataHQ[1]] : LuminaSheets.ItemFoodSheet[desiredPot.Data[1]];
+                if (potBuff.Param != (itemPot.RowId + (Service.Configuration.PotHQ ? 10000 : 0)))
+                {
+                    DuoLog.Error("Potion buff does not match desired potion.");
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         internal static bool UseItem(uint id, bool hq = false)
@@ -102,7 +140,7 @@ namespace Artisan.Autocraft
             {
                 if (GetFood(true, Service.Configuration.FoodHQ).Any())
                 {
-                    if(use) UseItem(Service.Configuration.Food, Service.Configuration.FoodHQ);
+                    if (use) UseItem(Service.Configuration.Food, Service.Configuration.FoodHQ);
                     return false;
                 }
                 else

@@ -50,6 +50,8 @@ namespace Artisan
         public bool AbortIfNoFoodPot { get; set; } = false;
         public bool FoodHQ = true;
         public bool PotHQ = true;
+        public bool OverrideFood = false;
+        public bool OverridePot = false;
         public bool Repair { get; set; } = false;
         public int RepairPercent = 50;
 

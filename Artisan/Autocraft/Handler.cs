@@ -178,9 +178,12 @@ namespace Artisan.Autocraft
             ImGuiComponents.HelpMarker("Artisan will require the configured food or medicine and refuse to craft if it cannot be found.");
             if (requireFoodPot)
             {
+                ImGui.Columns(2, null, false);
+                ImGui.SetColumnWidth(0, 120f);
+
                 {
                     ImGuiEx.TextV("Food Usage:");
-                    ImGui.SameLine(150f.Scale());
+                    ImGui.NextColumn();
                     ImGuiEx.SetNextItemFullWidth();
                     if (ImGui.BeginCombo("##foodBuff", ConsumableChecker.Food.TryGetFirst(x => x.Id == Service.Configuration.Food, out var item) ? $"{(Service.Configuration.FoodHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Food == 0 ? "Disabled" : $"{(Service.Configuration.FoodHQ ? " " : "")}{Service.Configuration.Food}")}"))
                     {
@@ -206,11 +209,16 @@ namespace Artisan.Autocraft
                         }
                         ImGui.EndCombo();
                     }
+                    if (Service.Configuration.Food != 0)
+                    {
+                        ImGui.Checkbox("Override incorrect buff", ref Service.Configuration.OverrideFood);
+                    }
+                    ImGui.NextColumn();
                 }
 
                 {
                     ImGuiEx.TextV("Medicine Usage:");
-                    ImGui.SameLine(150f.Scale());
+                    ImGui.NextColumn();
                     ImGuiEx.SetNextItemFullWidth();
                     if (ImGui.BeginCombo("##potBuff", ConsumableChecker.Pots.TryGetFirst(x => x.Id == Service.Configuration.Potion, out var item) ? $"{(Service.Configuration.PotHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Potion == 0 ? "Disabled" : $"{(Service.Configuration.PotHQ ? " " : "")}{Service.Configuration.Potion}")}"))
                     {
@@ -236,9 +244,15 @@ namespace Artisan.Autocraft
                         }
                         ImGui.EndCombo();
                     }
+                    if (Service.Configuration.Potion != 0)
+                    {
+                        ImGui.Checkbox("Override incorrect buff", ref Service.Configuration.OverridePot);
+                    }
+                    ImGui.NextColumn();
                 }
+                ImGui.Columns(1);
             }
-
+            
             bool repairs = Service.Configuration.Repair;
             if(ImGui.Checkbox("Automatic Repairs", ref repairs))
             {
