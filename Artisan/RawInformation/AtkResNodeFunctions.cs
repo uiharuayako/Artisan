@@ -18,7 +18,7 @@ namespace Artisan.RawInformation
 
             position += ImGuiHelpers.MainViewport.Pos;
 
-            ImGui.GetForegroundDrawList(ImGuiHelpers.MainViewport).AddRect(position, position + size, 0xFFFFFF00, 0, ImDrawFlags.RoundCornersAll, 8);
+            ImGui.GetForegroundDrawList(ImGuiHelpers.MainViewport).AddRect(position, position + size, 0xFFFFFF00, 0, ImDrawFlags.RoundCornersAll, 3);
         }
 
         public unsafe static void DrawSuccessRate(AtkResNode* node, string str, string itemName, bool isMainWindow = false)

@@ -9,9 +9,6 @@
   </PropertyGroup>
 
 	<PropertyGroup>
-		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-		<DalamudPluginPath>$(appdata)\XIVLauncher\installedPlugins\Artisan\$(version)</DalamudPluginPath>
-		<DalamudDevPlugins>$(appdata)\XIVLauncher\devPlugins\Artisan\</DalamudDevPlugins>
 		<AssemblyName>Artisan</AssemblyName>
 		<RootNamespace>Artisan</RootNamespace>
 		<PackageId>Artisan</PackageId>
@@ -19,7 +16,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net5.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -32,7 +29,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net5.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -40,12 +37,12 @@
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>$(DalamudDevPlugins)</OutputPath>
+		<OutputPath>bin/Debug</OutputPath>
 		<NoWarn>CS1591</NoWarn>
 	</PropertyGroup>
 	
   <PropertyGroup>
-    <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+		<DalamudLibPath>..\..\DalamudDep\</DalamudLibPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -58,10 +55,10 @@
   <ItemGroup>
     <PackageReference Include="DalamudPackager" Version="2.1.8" />
     <ProjectReference Include="..\ClickLib\ClickLib\ClickLib.csproj" />
-    <!--<ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj" />-->
+	<ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+	<!--<ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj" />-->
     <!--<ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" />-->
-    <ProjectReference Include="..\PunishLib\ECommons\ECommons\ECommons.csproj" />
-    <ProjectReference Include="..\PunishLib\PunishLib\PunishLib.csproj" />
+    <!--<ProjectReference Include="..\PunishLib\PunishLib\PunishLib.csproj" />-->
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>
