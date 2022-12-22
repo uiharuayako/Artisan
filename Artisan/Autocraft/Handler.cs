@@ -136,7 +136,7 @@ namespace Artisan.Autocraft
                     if (TryGetAddonByName<AtkUnitBase>("RecipeNote", out var addon) && addon->IsVisible)
                     {
                         if (AutocraftDebugTab.Debug) PluginLog.Verbose("Addon visible");
-                        if (addon->UldManager.NodeListCount >= 87 && !addon->UldManager.NodeList[87]->GetAsAtkTextNode()->AtkResNode.IsVisible)
+                        if (addon->UldManager.NodeListCount >= 88 && !addon->UldManager.NodeList[88]->GetAsAtkTextNode()->AtkResNode.IsVisible)
                         {
                             if (AutocraftDebugTab.Debug) PluginLog.Verbose("Error text not visible");
                             if (!HQManager.RestoreHQData(HQData, out var fin) || !fin)
@@ -338,7 +338,7 @@ namespace Artisan.Autocraft
 
                         if (Svc.Data.GetExcelSheet<Recipe>().TryGetFirst(x => x.ItemResult.Value.Name.RawString == rName, out var id))
                         {
-                            RecipeID = id.Number;
+                            RecipeID = id.Unknown0;
                             RecipeName = id.ItemResult.Value.Name;
                         }
                     }
