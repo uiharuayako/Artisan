@@ -20,13 +20,15 @@ namespace Artisan.MacroSystem
 
         internal static void Draw()
         {
-            ImGui.TextWrapped("This tab will allow you to add macros that Artisan can use instead of its own decisions.");
+            ImGui.TextWrapped("该选项卡允许你添加宏给Artisan执行而不是自行推算下一步操作.");
             ImGui.Separator();
             ImGui.Spacing();
-            if (ImGui.Button("Import Macro From Clipboard"))
+            if (ImGui.Button("从剪切板导入宏"))
                 OpenMacroNamePopup(MacroNameUse.FromClipboard);
 
-            if (ImGui.Button("New Macro"))
+            ImGui.SameLine();
+
+            if (ImGui.Button("新建宏"))
                 OpenMacroNamePopup(MacroNameUse.NewMacro);
 
             DrawMacroNamePopup(MacroNameUse.FromClipboard);
@@ -38,18 +40,18 @@ namespace Artisan.MacroSystem
                 float longestName = 0;
                 foreach (var macro in Service.Configuration.UserMacros)
                 {
-                    if (ImGui.CalcTextSize($"{macro.Name} (CP Cost: {GetCPCost(macro)})").Length() > longestName)
-                        longestName = ImGui.CalcTextSize($"{macro.Name} (CP Cost: {GetCPCost(macro)})").Length();
+                    if (ImGui.CalcTextSize($"{macro.Name} (消耗的制作力: {GetCPCost(macro)})").Length() > longestName)
+                        longestName = ImGui.CalcTextSize($"{macro.Name} (消耗的制作力: {GetCPCost(macro)})").Length();
                 }
 
                 longestName = Math.Max(150, longestName);
-                ImGui.Text("Macro List");
+                ImGui.Text("宏列表");
                 if (ImGui.BeginChild("##selector", new Vector2(longestName + 40, 0), true))
                 {
                     foreach (Macro m in Service.Configuration.UserMacros)
                     {
                         uint cpCost = GetCPCost(m);
-                        var selected = ImGui.Selectable($"{m.Name} (CP Cost: {cpCost})###{m.ID}", m.ID == selectedMacro.ID);
+                        var selected = ImGui.Selectable($"{m.Name} (消耗的制作力: {cpCost})###{m.ID}", m.ID == selectedMacro.ID);
 
                         if (selected)
                         {
@@ -62,8 +64,8 @@ namespace Artisan.MacroSystem
                 {
                     ImGui.SameLine();
                     ImGui.BeginChild("###selectedMacro", new Vector2(0, 0), false);
-                    ImGui.Text($"Selected Macro: {selectedMacro.Name}");
-                    if (ImGui.Button("Delete Macro (Hold Ctrl)") && ImGui.GetIO().KeyCtrl)
+                    ImGui.Text($"已选中的宏: {selectedMacro.Name}");
+                    if (ImGui.Button("删除宏 (按下 Ctrl)") && ImGui.GetIO().KeyCtrl)
                     {
                         Service.Configuration.UserMacros.Remove(selectedMacro);
                         if (Service.Configuration.SetMacro?.ID == selectedMacro.ID)
@@ -76,27 +78,27 @@ namespace Artisan.MacroSystem
                     ImGui.Spacing();
                     ImGui.SameLine();
                     bool skipQuality = selectedMacro.MacroOptions.SkipQualityIfMet;
-                    if (ImGui.Checkbox("Skip quality actions if at 100%", ref skipQuality))
+                    if (ImGui.Checkbox("当品质达到 100% 时跳过提升品质的技能", ref skipQuality))
                     {
                         selectedMacro.MacroOptions.SkipQualityIfMet = skipQuality;
                         if (Service.Configuration.SetMacro?.ID == selectedMacro.ID)
                             Service.Configuration.SetMacro = selectedMacro;
                         Service.Configuration.Save();
                     }
-                    ImGuiComponents.HelpMarker("Once you're at 100% quality, the macro will skip over all actions relating to quality, including buffs.");
+                    ImGuiComponents.HelpMarker("当品质达到 100% 时, 将会跳过所有与提升品质相关的技能, 包括Buff.");
                     ImGui.SameLine();
                     bool upgradeActions = selectedMacro.MacroOptions.UpgradeActions;
-                    if (ImGui.Checkbox("Upgrade actions", ref upgradeActions))
+                    if (ImGui.Checkbox("自动升级技能", ref upgradeActions))
                     {
                         selectedMacro.MacroOptions.UpgradeActions = upgradeActions;
                         if (Service.Configuration.SetMacro?.ID == selectedMacro.ID)
                             Service.Configuration.SetMacro = selectedMacro;
                         Service.Configuration.Save();
                     }
-                    ImGuiComponents.HelpMarker("If you get a Good or Excellent condition and your macro is on a step that increases quality or progress (not including Byregot's Blessing) then it will upgrade the action to either Precise Touch or Intensive Synthesis depending on what the original action would have increased.");
+                    ImGuiComponents.HelpMarker("当状态为高品质或最高品质, 且当前宏执行到了提升品质或推动进展的技能上 (不包括比尔格的祝福) 那么技能将会被修改为 '集中加工' 或 '集中制作' (取决于原技能推进的是什么).");
 
                     ImGui.Columns(2, "actionColumns", false);
-                    if (ImGui.Button("Insert New Action"))
+                    if (ImGui.Button("插入新技能"))
                     {
                         if (selectedMacro.MacroActions.Count == 0)
                             selectedMacro.MacroActions.Add(Skills.BasicSynth);
@@ -105,7 +107,7 @@ namespace Artisan.MacroSystem
 
                         Service.Configuration.Save();
                     }
-                    ImGui.TextWrapped("Macro Actions");
+                    ImGui.TextWrapped("宏技能");
                     ImGui.Indent();
                     for (int i = 0; i < selectedMacro.MacroActions.Count(); i++)
                     {
@@ -121,7 +123,7 @@ namespace Artisan.MacroSystem
                             return;
 
                         ImGui.NextColumn();
-                        ImGui.Text($"Selected Action: {GetActionName(selectedMacro.MacroActions[selectedActionIndex])}");
+                        ImGui.Text($"选择的技能: {GetActionName(selectedMacro.MacroActions[selectedActionIndex])}");
                         if (selectedActionIndex > 0)
                         {
                             ImGui.SameLine();
@@ -141,7 +143,7 @@ namespace Artisan.MacroSystem
                         }
 
 
-                        if (ImGui.Button("Delete Action (Hold Ctrl)") && ImGui.GetIO().KeyCtrl)
+                        if (ImGui.Button("删除技能 (按住 Ctrl)") && ImGui.GetIO().KeyCtrl)
                         {
                             selectedMacro.MacroActions.RemoveAt(selectedActionIndex);
                             Service.Configuration.Save();
@@ -150,7 +152,7 @@ namespace Artisan.MacroSystem
                                 selectedActionIndex--;
                         }
 
-                        if (ImGui.BeginCombo("###ReplaceAction", "Replace Action"))
+                        if (ImGui.BeginCombo("###ReplaceAction", "替换技能"))
                         {
                             foreach(var constant in typeof(Skills).GetFields().OrderBy(x => GetActionName((uint)x.GetValue(null))))
                             {
@@ -167,7 +169,7 @@ namespace Artisan.MacroSystem
                             ImGui.EndCombo();
                         }
 
-                        ImGui.Text("Re-order Action");
+                        ImGui.Text("重新排列技能");
                         if (selectedActionIndex > 0)
                         {
                             ImGui.SameLine();
@@ -261,7 +263,7 @@ namespace Artisan.MacroSystem
                     _keyboardFocus = false;
                 }
 
-                if (ImGui.InputText("Macro Name##macroName", ref _newMacroName, 64, ImGuiInputTextFlags.EnterReturnsTrue)
+                if (ImGui.InputText("宏名称##macroName", ref _newMacroName, 64, ImGuiInputTextFlags.EnterReturnsTrue)
                  && _newMacroName.Any())
                 {
                     switch (use)
@@ -280,14 +282,14 @@ namespace Artisan.MacroSystem
                                 if (macro.ID != 0)
                                     if (macro.Save())
                                     {
-                                        Service.ChatGui.Print($"{macro.Name} has been saved.");
+                                        Service.ChatGui.Print($"{macro.Name} 已保存.");
                                     }
                                     else
                                     {
-                                        Service.ChatGui.PrintError("Unable to save macro. Please check your clipboard contains a working macro with actions.");
+                                        Service.ChatGui.PrintError("无法保存宏. 请确认你的宏内包含了有效的技能.");
                                     }
                                 else
-                                    Service.ChatGui.PrintError("Unable to parse clipboard. Please check your clipboard contains a working macro with actions.");
+                                    Service.ChatGui.PrintError("无法导入剪切板. 请确认你的剪切板内有宏且包含了有效的技能.");
                             }
                             catch (Exception e)
                             {
@@ -335,7 +337,7 @@ namespace Artisan.MacroSystem
                             var act = LuminaSheets.CraftActions.Values.FirstOrDefault(x => x.Name.RawString.Equals(action, StringComparison.CurrentCultureIgnoreCase) && x.ClassJobCategory.Value.RowId != 0);
                             if (act == null)
                             {
-                                Service.ChatGui.PrintError($"Unable to parse action: {action}");
+                                Service.ChatGui.PrintError($"无法导入技能: {action}");
                             }
                             macro.MacroActions.Add(act.RowId);
                             continue;
@@ -346,7 +348,7 @@ namespace Artisan.MacroSystem
                             var act = LuminaSheets.ActionSheet.Values.FirstOrDefault(x => x.Name.RawString.Equals(action, StringComparison.CurrentCultureIgnoreCase) && x.ClassJobCategory.Value.RowId != 0);
                             if (act == null)
                             {
-                                Service.ChatGui.PrintError($"Unable to parse action: {action}");
+                                Service.ChatGui.PrintError($"无法导入技能: {action}");
                             }
                             macro.MacroActions.Add(act.RowId);
                             continue;

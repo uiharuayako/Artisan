@@ -101,34 +101,34 @@ namespace Artisan
             {
                 if (ImGui.BeginTabBar("TabBar"))
                 {
-                    if (ImGui.BeginTabItem("Settings"))
+                    if (ImGui.BeginTabItem("设置"))
                     {
                         DrawMainWindow();
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Endurance/Auto-Repeat Mode"))
+                    if (ImGui.BeginTabItem("长效/自动重复模式"))
                     {
                         Handler.Draw();
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Macros"))
+                    if (ImGui.BeginTabItem("宏"))
                     {
                         MacroUI.Draw();
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Crafting List (BETA)"))
+                    if (ImGui.BeginTabItem("制作列表 (BETA)"))
                     {
                         CraftingListUI.Draw();
                         ImGui.EndTabItem();
                     }
 
-                    if (ImGui.BeginTabItem("About"))
+                    if (ImGui.BeginTabItem("关于"))
                     {
                         PunishLib.ImGuiMethods.AboutTab.Draw(Plugin);
                         ImGui.EndTabItem();
                     }
 #if DEBUG
-                    if (ImGui.BeginTabItem("Debug"))
+                    if (ImGui.BeginTabItem("调试"))
                     {
                         AutocraftDebugTab.Draw();
                         ImGui.EndTabItem();
@@ -139,7 +139,7 @@ namespace Artisan
                 if (!visible)
                 {
                     Service.Configuration.Save();
-                    PluginLog.Information("Configuration saved");
+                    PluginLog.Information("配置已保存");
                 }
             }
         }
@@ -242,17 +242,17 @@ namespace Artisan
         {
             var sheetItem = LuminaSheets.RecipeSheet?.Values.Where(x => x.ItemResult.Value.Name!.RawString.Equals(itemName)).FirstOrDefault();
             if (sheetItem == null)
-                return "Unknown Item - Check Selected Recipe Window";
+                return "未知物品 - 请确认选择的配方窗口";
             var recipeTable = sheetItem.RecipeLevelTable.Value;
 
             if (!sheetItem.ItemResult.Value.CanBeHq && !sheetItem.IsExpert && !sheetItem.ItemResult.Value.IsCollectable)
-                return $"Item cannot be HQ.";
+                return $"该物品无法制作成HQ物品.";
 
             if (CharacterInfo.Craftsmanship() < sheetItem.RequiredCraftsmanship || CharacterInfo.Control() < sheetItem.RequiredControl)
-                return "Unable to craft with current stats.";
+                return "当前三围无法制作.";
 
             if (CharacterInfo.CharacterLevel() >= 80 && CharacterInfo.CharacterLevel() >= sheetItem.RecipeLevelTable.Value.ClassJobLevel + 10 && !sheetItem.IsExpert)
-                return "EHQ: Guaranteed.";
+                return "EHQ: 肯定能成.";
 
             var simulatedPercent = Service.Configuration.UseSimulatedStartingQuality && sheetItem.MaterialQualityFactor != 0 ? Math.Floor(((double)Service.Configuration.CurrentSimulated / ((double)sheetItem.RecipeLevelTable.Value.Quality * ((double)sheetItem.QualityFactor / 100))) * 100) : 0;
             simulatedPercent = CurrentSelectedCraft is null || CurrentSelectedCraft != sheetItem.ItemResult.Value.Name!.RawString ? 0 : simulatedPercent;
@@ -273,13 +273,13 @@ namespace Artisan
 
             return chance switch
             {
-                < 20 => "EHQ: Do not attempt.",
-                < 40 => "EHQ: Very low chance.",
-                < 60 => "EHQ: Average chance.",
-                < 80 => "EHQ: Good chance.",
-                < 90 => "EHQ: High chance.",
-                < 100 => "EHQ: Very high chance.",
-                _ => "EHQ: Guaranteed.",
+                < 20 => "EHQ: 别试了.",
+                < 40 => "EHQ: 较低几率.",
+                < 60 => "EHQ: 中等几率.",
+                < 80 => "EHQ: 很有几率.",
+                < 90 => "EHQ: 十分有几率.",
+                < 100 => "EHQ: 非常有几率.",
+                _ => "EHQ: 肯定能成.",
             };
         }
 
@@ -297,7 +297,7 @@ namespace Artisan
             {
                 bool autoMode = Service.Configuration.AutoMode;
 
-                if (ImGui.Checkbox("Auto Mode", ref autoMode))
+                if (ImGui.Checkbox("自动模式", ref autoMode))
                 {
                     Service.Configuration.AutoMode = autoMode;
                     Service.Configuration.Save();
@@ -307,7 +307,7 @@ namespace Artisan
                 {
                     var delay = Service.Configuration.AutoDelay;
                     ImGui.PushItemWidth(200);
-                    if (ImGui.SliderInt("Set delay (ms)", ref delay, 0, 1000))
+                    if (ImGui.SliderInt("执行间隔 (ms)", ref delay, 0, 1000))
                     {
                         if (delay < 0) delay = 0;
                         if (delay > 1000) delay = 1000;
@@ -319,15 +319,15 @@ namespace Artisan
 
 
                 if (Handler.RecipeID != 0)
-                ImGui.Checkbox("Endurance Mode Toggle", ref Handler.Enable);
+                ImGui.Checkbox("长效模式", ref Handler.Enable);
 
                 if (Service.Configuration.CraftingX && Handler.Enable)
                 {
-                    ImGui.Text($"Remaining Crafts: {Service.Configuration.CraftX}");
+                    ImGui.Text($"剩余制作次数: {Service.Configuration.CraftX}");
                 }
 
 #if DEBUG
-                ImGui.Checkbox("Trial Craft Repeat", ref repeatTrial);
+                ImGui.Checkbox("重复模拟制作", ref repeatTrial);
 #endif
                 //bool failureCheck = Service.Configuration.DisableFailurePrediction;
 
@@ -338,13 +338,13 @@ namespace Artisan
                 //}
                 //ImGuiComponents.HelpMarker($"Disabling failure prediction may result in items failing to be crafted.\nUse at your own discretion.");
 
-                ImGui.Text("Semi-Manual Mode");
+                ImGui.Text("半自动模式");
 
-                if (ImGui.Button("Execute recommended action"))
+                if (ImGui.Button("执行推荐操作"))
                 {
                     Hotbars.ExecuteRecommended(CurrentRecommendation);
                 }
-                if (ImGui.Button("Fetch Recommendation"))
+                if (ImGui.Button("获取推荐操作"))
                 {
                     Artisan.FetchRecommendation(CurrentStep);
                 }
@@ -357,8 +357,8 @@ namespace Artisan
 
         public static void DrawMainWindow()
         {
-            ImGui.TextWrapped($"Here you can change some settings Artisan will use. Some of these can also be toggled during a craft.");
-            ImGui.TextWrapped($"In order to use Artisan's manual highlight, please slot every crafting action you have unlocked to a visible hotbar.");
+            ImGui.TextWrapped($"在这里你可以调整Artisan的设置. 其中的一些选项能够在制作期间调整.");
+            ImGui.TextWrapped($"若要使用Artisan的手动模式高亮推荐操作, 请将你已解锁的所有制作技能放到可见的热键栏上.");
             bool autoEnabled = Service.Configuration.AutoMode;
             //bool autoCraft = Service.Configuration.AutoCraft;
             bool failureCheck = Service.Configuration.DisableFailurePrediction;
@@ -373,17 +373,17 @@ namespace Artisan
             bool disableToasts = Service.Configuration.DisableToasts;
 
             ImGui.Separator();
-            if (ImGui.Checkbox("Auto Mode Enabled", ref autoEnabled))
+            if (ImGui.Checkbox("启用自动模式", ref autoEnabled))
             {
                 Service.Configuration.AutoMode = autoEnabled;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker($"Automatically use each recommended action.\nRequires the action to be on a visible hotbar.");
+            ImGuiComponents.HelpMarker($"自动执行推荐的操作.\n需要对应的技能在可见的热键栏上.");
             if (autoEnabled)
             {
                 var delay = Service.Configuration.AutoDelay;
                 ImGui.PushItemWidth(200);
-                if (ImGui.SliderInt("Set delay (ms)", ref delay, 0, 1000))
+                if (ImGui.SliderInt("执行间隔 (ms)", ref delay, 0, 1000))
                 {
                     if (delay < 0) delay = 0;
                     if (delay > 1000) delay = 1000;
@@ -393,20 +393,20 @@ namespace Artisan
                 }
             }
 
-            if (ImGui.Checkbox("Disable highlighting box", ref disableGlow))
+            if (ImGui.Checkbox("禁用高亮推荐操作", ref disableGlow))
             {
                 Service.Configuration.DisableHighlightedAction = disableGlow;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker("This is the box that highlights the actions on your hotbars for manual play.");
+            ImGuiComponents.HelpMarker("如果你想手动来的话, 该矩形高亮会向你指示推荐的操作.");
 
-            if (ImGui.Checkbox($"Disable recommendation toasts", ref disableToasts))
+            if (ImGui.Checkbox($"禁用右下角推荐操作通知", ref disableToasts))
             {
                 Service.Configuration.DisableToasts = disableToasts;
                 Service.Configuration.Save();
             }
 
-            ImGuiComponents.HelpMarker("These are the pop-ups whenever a new action is recommended.");
+            ImGuiComponents.HelpMarker("当有操作可推荐时弹出提示.");
 
             //if (ImGui.Checkbox($"Automatically Repeat Last Craft", ref autoCraft))
             //{
@@ -444,19 +444,19 @@ namespace Artisan
 
             if (Service.Configuration.UserMacros.Count > 0)
             {
-                if (ImGui.Checkbox("Enabled Macro Mode", ref useMacroMode))
+                if (ImGui.Checkbox("启用宏模式", ref useMacroMode))
                 {
                     Service.Configuration.UseMacroMode = useMacroMode;
                     Service.Configuration.Save();
                 }
-                ImGuiComponents.HelpMarker(@"Use a macro to craft instead of Artisan making its own decisions. 
-If the macro ends before the craft is complete, Artisan will resume making decisions until the end of the craft.
-If the macro cannot perform an action, you will have to manually intervene.");
+                ImGuiComponents.HelpMarker(@"使用一个固定的宏来进行制作而不是让Artisan决定下一步操作. 
+如果宏在制作完成之前结束了, Artisan会自行决定下一步操作直到制作完成.
+如果宏无法执行一些操作, 你必须要进行手动干预.");
 
                 if (useMacroMode)
                 {
                     string preview = Service.Configuration.SetMacro == null ? "" : Service.Configuration.SetMacro.Name;
-                    if (ImGui.BeginCombo("Select Macro", preview))
+                    if (ImGui.BeginCombo("选择宏", preview))
                     {
                         if (ImGui.Selectable(""))
                         {
@@ -482,26 +482,26 @@ If the macro cannot perform an action, you will have to manually intervene.");
                 useMacroMode = false;
             }
 
-            if (ImGui.Checkbox("Use Tricks of the Trade - Good", ref useTricksGood))
+            if (ImGui.Checkbox("使用 '秘诀' 技能 - 高品质", ref useTricksGood))
             {
                 Service.Configuration.UseTricksGood = useTricksGood;
                 Service.Configuration.Save();
             }
             ImGui.SameLine();
-            if (ImGui.Checkbox("Use Tricks of the Trade - Excellent", ref useTricksExcellent))
+            if (ImGui.Checkbox("使用 '秘诀' 技能 - 最高品质", ref useTricksExcellent))
             {
                 Service.Configuration.UseTricksExcellent = useTricksExcellent;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker($"These 2 options allow you to make Tricks of the Trade a priority when condition is Good or Excellent.\nOther skills that rely on these conditions will not be used.");
-            if (ImGui.Checkbox("Use Specialist Actions", ref useSpecialist))
+            ImGuiComponents.HelpMarker($"这2个选项允许你当前状态为高品质或最高品质时使用秘诀.\n其他依赖于该状态的技能不会被使用.");
+            if (ImGui.Checkbox("使用专家技能", ref useSpecialist))
             {
                 Service.Configuration.UseSpecialist = useSpecialist;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker("If the current job is a specialist, spends any Crafter's Delineation you may have.\nCareful Observation replaces Observe.");
-            ImGui.TextWrapped("Max Quality%%");
-            ImGuiComponents.HelpMarker($"Once quality has reached the below percentage, Artisan will focus on progress only.");
+            ImGuiComponents.HelpMarker("若当前职业有专家认证, 使用消耗'能工巧匠图纸'道具的技能.\n'设计变动' 将会取代 '观察'.");
+            ImGui.TextWrapped("最大品质%%");
+            ImGuiComponents.HelpMarker($"当品质达到了设置的品质及以上, Artisan将会专注于推动进展.");
             if (ImGui.SliderInt("###SliderMaxQuality", ref maxQuality, 0, 100, $"{maxQuality}%%"))
             {
                 Service.Configuration.MaxPercentage = maxQuality;

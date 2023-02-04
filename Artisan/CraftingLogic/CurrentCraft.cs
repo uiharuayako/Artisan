@@ -218,15 +218,15 @@ namespace Artisan.CraftingLogic
 
                 CurrentCondition = cond.NodeText.ToString() switch
                 {
-                    "Poor" => Condition.Poor,
-                    "Good" => Condition.Good,
-                    "Normal" => Condition.Normal,
-                    "Excellent" => Condition.Excellent,
-                    "Centered" => Condition.Centered,
-                    "Sturdy" => Condition.Sturdy,
-                    "Pliant" => Condition.Pliant,
-                    "Malleable" => Condition.Malleable,
-                    "Primed" => Condition.Primed,
+                    "低品质" => Condition.Poor,
+                    "通常" => Condition.Normal,
+                    "高品质" => Condition.Good,
+                    "最高品质" => Condition.Excellent,
+                    "安定" => Condition.Centered,
+                    "结实" => Condition.Sturdy,
+                    "高效" => Condition.Pliant,
+                    "大进展" => Condition.Malleable,
+                    "长持续" => Condition.Primed,
                     _ => Condition.Unknown
                 };
 

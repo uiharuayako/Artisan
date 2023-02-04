@@ -18,14 +18,14 @@ namespace Artisan.Autocraft
         internal static void Draw()
         {
             ImGui.Checkbox("Debug logging", ref Debug);
-            if (ImGui.CollapsingHeader("Crafter's food"))
+            if (ImGui.CollapsingHeader("所有能工巧匠食物"))
             {
                 foreach (var x in ConsumableChecker.GetFood())
                 {
                     ImGuiEx.Text($"{x.Id}: {x.Name}");
                 }
             }
-            if (ImGui.CollapsingHeader("Crafter's food in inventory"))
+            if (ImGui.CollapsingHeader("背包内的食物"))
             {
                 foreach (var x in ConsumableChecker.GetFood(true))
                 {
@@ -35,7 +35,7 @@ namespace Artisan.Autocraft
                     }
                 }
             }
-            if (ImGui.CollapsingHeader("Crafter's HQ food in inventory"))
+            if (ImGui.CollapsingHeader("背包内的HQ食物"))
             {
                 foreach (var x in ConsumableChecker.GetFood(true, true))
                 {
@@ -45,14 +45,14 @@ namespace Artisan.Autocraft
                     }
                 }
             }
-            if (ImGui.CollapsingHeader("Crafter's pots"))
+            if (ImGui.CollapsingHeader("所有能工巧匠药水"))
             {
                 foreach (var x in ConsumableChecker.GetPots())
                 {
                     ImGuiEx.Text($"{x.Id}: {x.Name}");
                 }
             }
-            if (ImGui.CollapsingHeader("Crafter's pots in inventory"))
+            if (ImGui.CollapsingHeader("背包内的药水"))
             {
                 foreach (var x in ConsumableChecker.GetPots(true))
                 {
@@ -62,7 +62,7 @@ namespace Artisan.Autocraft
                     }
                 }
             }
-            if (ImGui.CollapsingHeader("Crafter's HQ pots in inventory"))
+            if (ImGui.CollapsingHeader("背包内的HQ药水"))
             {
                 foreach (var x in ConsumableChecker.GetPots(true, true))
                 {
@@ -73,29 +73,29 @@ namespace Artisan.Autocraft
                 }
             }
 
-            if (ImGui.CollapsingHeader("Crafting Stats"))
+            if (ImGui.CollapsingHeader("制作状态"))
             {
-                ImGui.Text($"Current Durability: {CurrentCraft.CurrentDurability}");
-                ImGui.Text($"Max Durability: {CurrentCraft.MaxDurability}");
-                ImGui.Text($"Current Progress: {CurrentCraft.CurrentProgress}");
-                ImGui.Text($"Max Progress: {CurrentCraft.MaxProgress}");
-                ImGui.Text($"Current Quality: {CurrentCraft.CurrentQuality}");
-                ImGui.Text($"Max Quality: {CurrentCraft.MaxQuality}");
-                ImGui.Text($"Item name: {CurrentCraft.ItemName}");
-                ImGui.Text($"Current Condition: {CurrentCraft.CurrentCondition}");
-                ImGui.Text($"Current Step: {CurrentCraft.CurrentStep}");
-                ImGui.Text($"GS+ByregotCombo: {CurrentCraft.GreatStridesByregotCombo()}");
-                ImGui.Text($"Predicted Quality: {CurrentCraft.CalculateNewQuality(CurrentCraft.CurrentRecommendation)}");
+                ImGui.Text($"当前耐久: {CurrentCraft.CurrentDurability}");
+                ImGui.Text($"最大耐久: {CurrentCraft.MaxDurability}");
+                ImGui.Text($"当前进展: {CurrentCraft.CurrentProgress}");
+                ImGui.Text($"最大进展: {CurrentCraft.MaxProgress}");
+                ImGui.Text($"当前品质: {CurrentCraft.CurrentQuality}");
+                ImGui.Text($"最大品质: {CurrentCraft.MaxQuality}");
+                ImGui.Text($"物品名称: {CurrentCraft.ItemName}");
+                ImGui.Text($"当前状态: {CurrentCraft.CurrentCondition}");
+                ImGui.Text($"当前步骤: {CurrentCraft.CurrentStep}");
+                ImGui.Text($"内静+贝尔格: {CurrentCraft.GreatStridesByregotCombo()}");
+                ImGui.Text($"预期品质: {CurrentCraft.CalculateNewQuality(CurrentCraft.CurrentRecommendation)}");
             }
             ImGui.Separator();
 
-            if (ImGui.Button("Repair all"))
+            if (ImGui.Button("修复所有装备"))
             {
                 RepairManager.ProcessRepair();
             }
-            ImGuiEx.Text($"Gear condition: {RepairManager.GetMinEquippedPercent()}");
-            ImGuiEx.Text($"Selected recipe: {AgentRecipeNote.Instance()->SelectedRecipeIndex}");
-            ImGuiEx.Text($"Insufficient Materials: {HQManager.InsufficientMaterials}");
+            ImGuiEx.Text($"装备耐久: {RepairManager.GetMinEquippedPercent()}");
+            ImGuiEx.Text($"选中的配方: {AgentRecipeNote.Instance()->SelectedRecipeIndex}");
+            ImGuiEx.Text($"材料是否足够: {HQManager.InsufficientMaterials}");
 
             /*ImGui.InputInt("id", ref SelRecId);
             if (ImGui.Button("OpenRecipeByRecipeId"))
