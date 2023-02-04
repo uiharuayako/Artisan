@@ -19,7 +19,7 @@ namespace Artisan
 {
     // It is good to have this be disposable in general, in case you ever need it
     // to do any cleanup
-    class PluginUI : IDisposable
+    public class PluginUI : IDisposable
     {
         public event EventHandler<bool>? CraftingWindowStateChanged;
 

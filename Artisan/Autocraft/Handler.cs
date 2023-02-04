@@ -1,4 +1,5 @@
 ﻿using Artisan.CraftingLogic;
+using Artisan.RawInformation;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Components;
 using Dalamud.Logging;
@@ -74,6 +75,8 @@ namespace Artisan.Autocraft
         {
             if (Enable)
             {
+                var isCrafting = Service.Condition[ConditionFlag.Crafting];
+                var preparing = Service.Condition[ConditionFlag.PreparingToCraft];
                 if (!Throttler.Throttle(0))
                 {
                     return;
@@ -81,6 +84,7 @@ namespace Artisan.Autocraft
                 if (Service.Configuration.CraftingX && Service.Configuration.CraftX == 0)
                 {
                     Enable = false;
+                    Service.Configuration.CraftingX = false;
                     return;
                 }
                 if (Svc.Condition[ConditionFlag.Occupied39])
@@ -95,6 +99,31 @@ namespace Artisan.Autocraft
                     return;
                 }
                 if (AutocraftDebugTab.Debug) PluginLog.Verbose("HQ not null");
+                if (Service.Configuration.Materia && Spiritbond.IsSpiritbondReadyAny())
+                {
+                    if (AutocraftDebugTab.Debug) PluginLog.Verbose("Entered materia extraction");
+                    if (TryGetAddonByName<AtkUnitBase>("RecipeNote", out var addon) && addon->IsVisible && Svc.Condition[ConditionFlag.Crafting])
+                    {
+                        if (AutocraftDebugTab.Debug) PluginLog.Verbose("Crafting");
+                        if (Throttler.Throttle(1000))
+                        {
+                            if (AutocraftDebugTab.Debug) PluginLog.Verbose("Closing crafting log");
+                            CommandProcessor.ExecuteThrottled("/clog");
+                        }
+                    }
+                    if (!Spiritbond.IsMateriaMenuOpen() && !isCrafting && !preparing)
+                    {
+                        Spiritbond.OpenMateriaMenu();
+                    }
+                    if (Spiritbond.IsMateriaMenuOpen() && !isCrafting && !preparing)
+                    {
+                        Spiritbond.ExtractFirstMateria();
+                    }
+                }
+                else
+                {
+                    Spiritbond.CloseMateriaMenu();
+                }
                 if (Service.Configuration.Repair && !RepairManager.ProcessRepair(false))
                 {
                     if (AutocraftDebugTab.Debug) PluginLog.Verbose("Entered repair check");
@@ -259,7 +288,13 @@ namespace Artisan.Autocraft
                 ImGui.PushItemWidth(200);
                 ImGui.SliderInt("##repairp", ref Service.Configuration.RepairPercent, 10, 100, $"{Service.Configuration.RepairPercent}%%");
             }
-
+            bool materia = Service.Configuration.Materia;
+            if (ImGui.Checkbox("自动精炼魔晶石", ref materia))
+            {
+                Service.Configuration.Materia = materia;
+                Service.Configuration.Save();
+            }
+            ImGuiComponents.HelpMarker("装备精炼值满了自动精炼魔晶石");
             ImGui.Checkbox("仅制作N次", ref Service.Configuration.CraftingX);
             if (Service.Configuration.CraftingX)
             {
@@ -300,7 +335,7 @@ namespace Artisan.Autocraft
                     if (addon->UldManager.NodeList[49]->IsVisible)
                     {
                         var text = addon->UldManager.NodeList[49]->GetAsAtkTextNode()->NodeText;
-                        var str = RawInformation.MemoryHelper.ReadSeString(&text);
+                        var str = MemoryHelper.ReadSeString(&text);
                         var rName = "";
 
                         /*
@@ -325,15 +360,15 @@ namespace Artisan.Autocraft
                          * 
                          * */
 
-                        if (str.TextValue.Length == 0) return;
+                        if (str.ExtractText().Length == 0) return;
 
-                        if (str.TextValue[^1] == '')
+                        if (str.ExtractText()[^1] == '')
                         {
-                            rName += str.TextValue.Remove(str.TextValue.Length - 1, 1).Trim();
+                            rName += str.ExtractText().Remove(str.ExtractText().Length - 1, 1).Trim();
                         }
                         else
                         {
-                            rName += str.TextValue.Trim();
+                            rName += str.ExtractText().Trim();
                         }
 
                         if (Svc.Data.GetExcelSheet<Recipe>().TryGetFirst(x => x.ItemResult.Value.Name.RawString == rName, out var id))
