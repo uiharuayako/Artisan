@@ -96,7 +96,7 @@ namespace Artisan
 
         static ActionWatching()
         {
-            UseActionHook ??= Hook<UseActionDelegate>.FromAddress((IntPtr)ActionManager.Addresses.UseAction.Value, UseActionDetour);
+            UseActionHook ??= Hook<UseActionDelegate>.FromAddress((IntPtr)ActionManager.fpUseAction, UseActionDetour);
         }
 
         public static void TryEnable()
