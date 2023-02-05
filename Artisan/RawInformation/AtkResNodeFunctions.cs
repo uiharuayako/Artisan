@@ -64,7 +64,7 @@ namespace Artisan.RawInformation
         {
             bool autoMode = Service.Configuration.AutoMode;
 
-            if (ImGui.Checkbox("Auto Mode", ref autoMode))
+            if (ImGui.Checkbox("开启自动", ref autoMode))
             {
                 Service.Configuration.AutoMode = autoMode;
                 Service.Configuration.Save();
@@ -84,10 +84,10 @@ namespace Artisan.RawInformation
             //    }
             //}
 
-            ImGui.Checkbox("Endurance Mode Toggle", ref Handler.Enable);
+            ImGui.Checkbox("切换长效模式", ref Handler.Enable);
 
             bool macroMode = Service.Configuration.UseMacroMode;
-            if (ImGui.Checkbox("Macro Mode", ref macroMode))
+            if (ImGui.Checkbox("使用宏", ref macroMode))
             {
                 Service.Configuration.UseMacroMode = macroMode;
                 Service.Configuration.Save();
@@ -135,7 +135,7 @@ namespace Artisan.RawInformation
             }
 
             ImGui.Spacing();
-            ImGui.Text($"Use a macro for this recipe ({Handler.RecipeName})");
+            ImGui.Text($"对此配方使用宏 ({Handler.RecipeName})");
             if (ImGui.BeginCombo("", preview))
             {
                 if (ImGui.Selectable(""))
