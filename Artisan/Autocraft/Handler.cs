@@ -224,36 +224,36 @@ namespace Artisan.Autocraft
         {
             if (CraftingListUI.Processing)
             {
-                ImGui.TextWrapped("Processing list...");
+                ImGui.TextWrapped("正在处理制作列表...");
                 return;
             }
 
-            ImGui.TextWrapped("Endurance mode is Artisan's way to repeat the same craft over and over, either so many times or until you run out of materials. It has full capabilities to automatically repair your gear once a piece is under a certain percentage, use food/potions/exp manuals and extract materia from spiritbonding. Please note these settings are independent of crafting list settings, and only intended to be used to craft the one item repeatedly.");
+            ImGui.TextWrapped("该模式用于自动重复自动制作物品, 直到到达指定次数或剩余材料不足以继续制作. 该模式能够在自动制作时自动修复装备, 使用食物/指南/药水以及自动精制魔晶石. 请注意这里的设置是独立于制作列表的设置的, 且仅用于自动重复制作单个物品.");
             ImGui.Separator();
             ImGui.Spacing();
-            if (ImGui.Checkbox("Enable Endurance Mode", ref enable))
+            if (ImGui.Checkbox("启用自动重复制作模式", ref enable))
             {
                 Enable = enable;
             }
-            ImGuiComponents.HelpMarker("In order to begin Endurance Mode crafting you should first select the recipe and NQ/HQ material distribution in the crafting menu.\nEndurance Mode will automatically repeat the selected recipe similar to Auto-Craft but will factor in food/medicine buffs before doing so.");
-            ImGuiEx.Text($"Recipe: {RecipeName} {(RecipeID != 0 ? $"({LuminaSheets.RecipeSheet[(uint)RecipeID].CraftType.Value.Name.RawString})" : "")}\nHQ ingredients: {HQData?.Select(x => x.ToString()).Join(", ")}");
+            ImGuiComponents.HelpMarker("要使用该模式, 你需要先在制作笔记界面选择配方然后选择HQ/NQ材料.\n该模式将会自动重复制作选择的配方, 类似自动制作, 但是会在制作之前自动使用选择的消耗品.");
+            ImGuiEx.Text($"配方: {RecipeName} {(RecipeID != 0 ? $"({LuminaSheets.RecipeSheet[(uint)RecipeID].CraftType.Value.Name.RawString})" : "")}\nHQ 材料: {HQData?.Select(x => x.ToString()).Join(", ")}");
             bool requireFoodPot = Service.Configuration.AbortIfNoFoodPot;
-            if (ImGui.Checkbox("Use Food, Manuals and/or Medicine", ref requireFoodPot))
+            if (ImGui.Checkbox("使用食物, 指南并且/或者药水", ref requireFoodPot))
             {
                 Service.Configuration.AbortIfNoFoodPot = requireFoodPot;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker("Artisan will require the configured food, manuals or medicine and refuse to craft if it cannot be found.");
+            ImGuiComponents.HelpMarker("Artisan 将会寻找指定的食物、指南或药水, 若其中之一没有找到将会终止制作.");
             if (requireFoodPot)
             {
 
                 {
-                    ImGuiEx.TextV("Food Usage:");
+                    ImGuiEx.TextV("使用食物:");
                     ImGui.SameLine(300f.Scale());
                     ImGuiEx.SetNextItemFullWidth();
-                    if (ImGui.BeginCombo("##foodBuff", ConsumableChecker.Food.TryGetFirst(x => x.Id == Service.Configuration.Food, out var item) ? $"{(Service.Configuration.FoodHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Food == 0 ? "Disabled" : $"{(Service.Configuration.FoodHQ ? " " : "")}{Service.Configuration.Food}")}"))
+                    if (ImGui.BeginCombo("##foodBuff", ConsumableChecker.Food.TryGetFirst(x => x.Id == Service.Configuration.Food, out var item) ? $"{(Service.Configuration.FoodHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Food == 0 ? "无" : $"{(Service.Configuration.FoodHQ ? " " : "")}{Service.Configuration.Food}")}"))
                     {
-                        if (ImGui.Selectable("Disable"))
+                        if (ImGui.Selectable("禁用"))
                         {
                             Service.Configuration.Food = 0;
                             Service.Configuration.Save();
@@ -281,12 +281,12 @@ namespace Artisan.Autocraft
                 }
 
                 {
-                    ImGuiEx.TextV("Medicine Usage:");
+                    ImGuiEx.TextV("使用药水:");
                     ImGui.SameLine(300f.Scale());
                     ImGuiEx.SetNextItemFullWidth();
-                    if (ImGui.BeginCombo("##potBuff", ConsumableChecker.Pots.TryGetFirst(x => x.Id == Service.Configuration.Potion, out var item) ? $"{(Service.Configuration.PotHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Potion == 0 ? "Disabled" : $"{(Service.Configuration.PotHQ ? " " : "")}{Service.Configuration.Potion}")}"))
+                    if (ImGui.BeginCombo("##potBuff", ConsumableChecker.Pots.TryGetFirst(x => x.Id == Service.Configuration.Potion, out var item) ? $"{(Service.Configuration.PotHQ ? " " : "")}{item.Name}" : $"{(Service.Configuration.Potion == 0 ? "无" : $"{(Service.Configuration.PotHQ ? " " : "")}{Service.Configuration.Potion}")}"))
                     {
-                        if (ImGui.Selectable("Disable"))
+                        if (ImGui.Selectable("禁用"))
                         {
                             Service.Configuration.Potion = 0;
                             Service.Configuration.Save();
@@ -314,12 +314,12 @@ namespace Artisan.Autocraft
                 }
 
                 {
-                    ImGuiEx.TextV("Manual Usage:");
+                    ImGuiEx.TextV("使用指南:");
                     ImGui.SameLine(300f.Scale());
                     ImGuiEx.SetNextItemFullWidth();
-                    if (ImGui.BeginCombo("##manualBuff", ConsumableChecker.Manuals.TryGetFirst(x => x.Id == Service.Configuration.Manual, out var item) ? $"{item.Name}" : $"{(Service.Configuration.Manual == 0 ? "Disabled" : $"{Service.Configuration.Manual}")}"))
+                    if (ImGui.BeginCombo("##manualBuff", ConsumableChecker.Manuals.TryGetFirst(x => x.Id == Service.Configuration.Manual, out var item) ? $"{item.Name}" : $"{(Service.Configuration.Manual == 0 ? "无" : $"{Service.Configuration.Manual}")}"))
                     {
-                        if (ImGui.Selectable("Disable"))
+                        if (ImGui.Selectable("禁用"))
                         {
                             Service.Configuration.Manual = 0;
                             Service.Configuration.Save();
@@ -337,12 +337,12 @@ namespace Artisan.Autocraft
                 }
 
                 {
-                    ImGuiEx.TextV("Squadron Manual Usage:");
+                    ImGuiEx.TextV("使用大国防联军指南:");
                     ImGui.SameLine(300f.Scale());
                     ImGuiEx.SetNextItemFullWidth();
-                    if (ImGui.BeginCombo("##squadronManualBuff", ConsumableChecker.SquadronManuals.TryGetFirst(x => x.Id == Service.Configuration.SquadronManual, out var item) ? $"{item.Name}" : $"{(Service.Configuration.SquadronManual == 0 ? "Disabled" : $"{Service.Configuration.SquadronManual}")}"))
+                    if (ImGui.BeginCombo("##squadronManualBuff", ConsumableChecker.SquadronManuals.TryGetFirst(x => x.Id == Service.Configuration.SquadronManual, out var item) ? $"{item.Name}" : $"{(Service.Configuration.SquadronManual == 0 ? "无" : $"{Service.Configuration.SquadronManual}")}"))
                     {
-                        if (ImGui.Selectable("Disable"))
+                        if (ImGui.Selectable("禁用"))
                         {
                             Service.Configuration.SquadronManual = 0;
                             Service.Configuration.Save();
@@ -362,12 +362,12 @@ namespace Artisan.Autocraft
             }
 
             bool repairs = Service.Configuration.Repair;
-            if (ImGui.Checkbox("Automatic Repairs", ref repairs))
+            if (ImGui.Checkbox("自动维修", ref repairs))
             {
                 Service.Configuration.Repair = repairs;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker("If enabled, Artisan will automatically repair your gear using Dark Matter when any piece reaches the configured repair threshold.");
+            ImGuiComponents.HelpMarker("若启用, Artisan将会在你的装备耐久低于设置的阈值时进行装备维修.");
             if (Service.Configuration.Repair)
             {
                 //ImGui.SameLine();
@@ -381,17 +381,17 @@ namespace Artisan.Autocraft
             }
 
             bool materia = Service.Configuration.Materia;
-            if (ImGui.Checkbox("Automatically Extract Materia", ref materia))
+            if (ImGui.Checkbox("自动精制魔晶石", ref materia))
             {
                 Service.Configuration.Materia = materia;
                 Service.Configuration.Save();
             }
-            ImGuiComponents.HelpMarker("Will automatically extract materia from any equipped gear once it's spiritbond is 100%");
+            ImGuiComponents.HelpMarker("当身上的装备有其中一件的精炼值达到100%之后自动进行魔晶石精制");
 
-            ImGui.Checkbox("Craft only X times", ref Service.Configuration.CraftingX);
+            ImGui.Checkbox("仅制作N次", ref Service.Configuration.CraftingX);
             if (Service.Configuration.CraftingX)
             {
-                ImGui.Text("Number of Times:");
+                ImGui.Text("制作次数:");
                 ImGui.SameLine();
                 ImGui.PushItemWidth(200);
                 if (ImGui.InputInt("###TimesRepeat", ref Service.Configuration.CraftX))
@@ -403,14 +403,14 @@ namespace Artisan.Autocraft
             }
 
             bool stopIfFail = Service.Configuration.EnduranceStopFail;
-            if (ImGui.Checkbox("Disable Endurance Mode Upon Failed Craft", ref stopIfFail))
+            if (ImGui.Checkbox("当制作失败时自动禁用该模式", ref stopIfFail))
             {
                 Service.Configuration.EnduranceStopFail = stopIfFail;
                 Service.Configuration.Save();
             }
 
             bool stopIfNQ = Service.Configuration.EnduranceStopNQ;
-            if (ImGui.Checkbox("Disable Endurance Mode Upon Crafting an NQ item", ref stopIfNQ))
+            if (ImGui.Checkbox("当制作NQ物品时自动禁用该模式", ref stopIfNQ))
             {
                 Service.Configuration.EnduranceStopNQ = stopIfNQ;
                 Service.Configuration.Save();

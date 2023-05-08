@@ -19,6 +19,7 @@ using ECommons;
 using ECommons.DalamudServices;
 using ECommons.Logging;
 using ImGuiNET;
+using PunishLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,6 +57,8 @@ public unsafe class Artisan : IDalamudPlugin
 
         Service.Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Service.Configuration.Initialize(Service.Interface);
+
+        PunishLibMain.Init(pluginInterface, this);
 
         ECommonsMain.Init(pluginInterface, this, Module.All);
         P = this;

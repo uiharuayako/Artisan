@@ -37,17 +37,17 @@ namespace Artisan.CraftingLists
         private static float DurY = 0f;
         public static void Draw()
         {
-            ImGui.TextWrapped($@"This section is for building lists based on certain criteria rather than individually. Give your list a name and select your criteria from below then select ""Build List"" and a new list will be created with all items that match the criteria. If you do not select any checkboxes then that category will be treated as ""Any"" or ""All"".");
+            ImGui.TextWrapped($@"此部分主要是基于特定标准来创建列表, 而非逐个添加. 请为你的列表命名, 然后在下方调整你的标准, 最后点击""创建列表"", 插件会自动生成符合标准的物品列表. 如果你不勾选任何复选框, 则该类别将会被视为""任意""或""所有""");
 
             ImGui.Separator();
 
             ImGui.Columns(6, null, false);
 
-            ImGui.TextWrapped("List Name");
+            ImGui.TextWrapped("列表名称");
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
             ImGui.InputText("###NameInput", ref listName, 300);
 
-            ImGui.TextWrapped($"Max Durability");
+            ImGui.TextWrapped($"最大耐久");
             if (ImGui.BeginListBox("###SpecialListDurability", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 110)))
             {
                 ImGui.Columns(2, null, false);
@@ -67,13 +67,13 @@ namespace Artisan.CraftingLists
             ImGui.Columns(6, null, false);
             ImGui.NextColumn();
 
-            ImGui.TextWrapped("Select Job(s)");
+            ImGui.TextWrapped("选择职业");
             if (ImGui.BeginListBox("###JobSelectListBox", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 110)))
             {
                 ImGui.Columns(2, null, false);
                 foreach (var item in JobSelected)
                 {
-                    string jobName = LuminaSheets.ClassJobSheet[item.Key].Abbreviation.ToString().ToUpper();
+                    string jobName = LuminaSheets.ClassJobSheet[item.Key].Name.ToString().ToUpper();
                     bool val = item.Value;
                     if (ImGui.Checkbox(jobName, ref val))
                     {
@@ -86,23 +86,23 @@ namespace Artisan.CraftingLists
             }
             ImGui.Columns(6, null, false);
             ImGui.NextColumn();
-            ImGui.TextWrapped("Minimum Level");
+            ImGui.TextWrapped("最低等级");
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
             ImGui.SliderInt("###SpecialListMinLevel", ref minLevel, 1, 90);
 
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-            ImGui.TextWrapped($"Unlockable Recipe");
+            ImGui.TextWrapped($"可解锁的配方");
             if (ImGui.BeginListBox("###UnlockableRecipe", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 32f.Scale())))
             {
                 ImGui.Columns(2, null, false);
                 bool yes = hasToBeUnlocked[1];
-                if (ImGui.Checkbox("Yes", ref yes))
+                if (ImGui.Checkbox("是", ref yes))
                 {
                     hasToBeUnlocked[1] = yes;
                 }
                 ImGui.NextColumn();
                 bool no = hasToBeUnlocked[2];
-                if (ImGui.Checkbox("No", ref no))
+                if (ImGui.Checkbox("否", ref no))
                 {
                     hasToBeUnlocked[2] = no;
                 }
@@ -110,18 +110,18 @@ namespace Artisan.CraftingLists
                 ImGui.EndListBox();
             }
 
-            ImGui.TextWrapped($"Quest Recipe");
+            ImGui.TextWrapped($"任务配方");
             if (ImGui.BeginListBox("###QuestRecipe", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 32f.Scale())))
             {
                 ImGui.Columns(2, null, false);
                 bool yes = questRecipe[1];
-                if (ImGui.Checkbox("Yes", ref yes))
+                if (ImGui.Checkbox("是", ref yes))
                 {
                     questRecipe[1] = yes;
                 }
                 ImGui.NextColumn();
                 bool no = questRecipe[2];
-                if (ImGui.Checkbox("No", ref no))
+                if (ImGui.Checkbox("否", ref no))
                 {
                     questRecipe[2] = no;
                 }
@@ -130,23 +130,23 @@ namespace Artisan.CraftingLists
             }
             ImGui.NextColumn();
 
-            ImGui.TextWrapped("Max Level");
+            ImGui.TextWrapped("最大等级");
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
             ImGui.SliderInt("###SpecialListMaxLevel", ref maxLevel, 1, 90);
 
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-            ImGui.TextWrapped($"Expert Recipe");
+            ImGui.TextWrapped($"专家配方");
             if (ImGui.BeginListBox("###ExpertRecipe", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 32f.Scale())))
             {
                 ImGui.Columns(2, null, false);
                 bool yes = isExpert[1];
-                if (ImGui.Checkbox("Yes", ref yes))
+                if (ImGui.Checkbox("是", ref yes))
                 {
                     isExpert[1] = yes;
                 }
                 ImGui.NextColumn();
                 bool no = isExpert[2];
-                if (ImGui.Checkbox("No", ref no))
+                if (ImGui.Checkbox("否", ref no))
                 {
                     isExpert[2] = no;
                 }
@@ -154,18 +154,18 @@ namespace Artisan.CraftingLists
                 ImGui.EndListBox();
             }
 
-            ImGui.TextWrapped($"Secondary Recipe");
+            ImGui.TextWrapped($"次级配方");
             if (ImGui.BeginListBox("###SecondaryRecipes", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 32f.Scale())))
             {
                 ImGui.Columns(2, null, false);
                 bool yes = isSecondary[1];
-                if (ImGui.Checkbox("Yes", ref yes))
+                if (ImGui.Checkbox("是", ref yes))
                 {
                     isSecondary[1] = yes;
                 }
                 ImGui.NextColumn();
                 bool no = isSecondary[2];
-                if (ImGui.Checkbox("No", ref no))
+                if (ImGui.Checkbox("否", ref no))
                 {
                     isSecondary[2] = no;
                 }
@@ -175,10 +175,10 @@ namespace Artisan.CraftingLists
             ImGui.NextColumn();
 
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-            ImGui.TextWrapped($"Minimum Craftsmanship");
+            ImGui.TextWrapped($"最低作业精度");
             ImGui.SliderInt($"###MinCraftsmanship", ref minCraftsmanship, LuminaSheets.RecipeSheet.Values.Min(x => x.RequiredCraftsmanship), LuminaSheets.RecipeSheet.Values.Max(x => x.RequiredCraftsmanship));
 
-            ImGui.TextWrapped("Amount Result");
+            ImGui.TextWrapped("成品数量");
             if (ImGui.BeginListBox("###Yields", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 147f.Scale())))
             {
                 ImGui.Columns(2, null, false);
@@ -196,10 +196,10 @@ namespace Artisan.CraftingLists
             ImGui.Columns(6, null, false);
             ImGui.NextColumn();
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-            ImGui.TextWrapped($"Minimum Control");
+            ImGui.TextWrapped($"最低加工精度");
             ImGui.SliderInt($"###MinControl", ref minControl, LuminaSheets.RecipeSheet.Values.Min(x => x.RequiredControl), LuminaSheets.RecipeSheet.Values.Max(x => x.RequiredControl));
 
-            ImGui.TextWrapped("Stars");
+            ImGui.TextWrapped("难度");
             if (ImGui.BeginListBox("###Stars", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 162f.Scale())))
             {
                 foreach (var star in Stars)
@@ -216,7 +216,7 @@ namespace Artisan.CraftingLists
             ImGui.Columns(1);
             ImGui.SetCursorPosY(DurY);
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 4);
-            ImGui.TextWrapped("Base Stats");
+            ImGui.TextWrapped("基础属性");
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 4);
             if (ImGui.BeginListBox("###Stats", new System.Numerics.Vector2((ImGui.GetContentRegionAvail().X / 6) * 4, 120)))
             {
@@ -238,30 +238,30 @@ namespace Artisan.CraftingLists
             ImGui.Columns(1);
 
             ImGui.Spacing();
-            if (ImGui.Button("Build List", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 0)))
+            if (ImGui.Button("创建列表", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 0)))
             {
                 if (listName.IsNullOrWhitespace())
                 {
-                    Notify.Error("Please give your list a name.");
+                    Notify.Error("请命名你的列表.");
                     return;
                 }
 
                 if (CreateList(false))
                 {
-                    Notify.Success($"{listName} has been created.");
+                    Notify.Success($"{listName} 已创建.");
                 }
             }
-            if (ImGui.Button("Build List (with subcrafts)", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 0)))
+            if (ImGui.Button("创建列表 (附带子配方)", new System.Numerics.Vector2(ImGui.GetContentRegionAvail().X, 0)))
             {
                 if (listName.IsNullOrWhitespace())
                 {
-                    Notify.Error("Please give your list a name.");
+                    Notify.Error("请命名你的列表.");
                     return;
                 }
 
                 if (CreateList(true))
                 {
-                    Notify.Success($"{listName} has been created.");
+                    Notify.Success($"{listName} 已创建.");
                 }
             }
         }
@@ -420,7 +420,7 @@ namespace Artisan.CraftingLists
 
             if (recipes.Count == 0)
             {
-                Notify.Error("Your list has no items");
+                Notify.Error("你选定的标准内没有任何匹配的物品.");
                 return false;
             }
 

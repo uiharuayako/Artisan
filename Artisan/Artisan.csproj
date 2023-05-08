@@ -9,9 +9,6 @@
   </PropertyGroup>
 
 	<PropertyGroup>
-		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-		<DalamudPluginPath>$(appdata)\XIVLauncher\installedPlugins\Artisan\$(version)</DalamudPluginPath>
-		<DalamudDevPlugins>$(appdata)\XIVLauncher\devPlugins\Artisan\</DalamudDevPlugins>
 		<AssemblyName>Artisan</AssemblyName>
 		<RootNamespace>Artisan</RootNamespace>
 		<PackageId>Artisan</PackageId>
@@ -45,17 +42,8 @@
 	</PropertyGroup>
 	
   <PropertyGroup>
-    <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+    <DalamudLibPath>..\..\DalamudDep\</DalamudLibPath>
   </PropertyGroup>
-	
-  <ItemGroup>
-    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>4</VersionMinor>
-      <VersionMajor>2</VersionMajor>
-      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
-    </COMReference>
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -81,7 +69,6 @@
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <ProjectReference Include="..\ClickLib\ClickLib\ClickLib.csproj" />
     <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
-    <ProjectReference Include="..\PunishLib\PunishLib\PunishLib.csproj" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>
