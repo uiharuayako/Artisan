@@ -68,7 +68,7 @@ namespace Artisan
                 var scale = AtkResNodeFunctions.GetNodeScale(node);
                 var size = new Vector2(node->Width, node->Height) * scale;
                 var center = new Vector2((position.X + size.X) / 2, (position.Y - size.Y) / 2);
-                var textSize = ImGui.CalcTextSize("Create crafting list for this phase");
+                var textSize = ImGui.CalcTextSize("为该阶段创建制作列表");
 
                 ImGuiHelpers.ForceNextWindowMainViewport();
                 ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(position.X + (4f * scale.X), position.Y + size.Y - textSize.Y - (34f * scale.Y)));
@@ -87,7 +87,7 @@ namespace Artisan
                     | ImGuiWindowFlags.AlwaysUseWindowPadding | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoSavedSettings);
 
 
-                if (ImGui.Button("Create crafting list for this phase"))
+                if (ImGui.Button("为该阶段创建制作列表"))
                 {
                     var itemNameNode = addonPtr->UldManager.NodeList[37]->GetAsAtkTextNode();
                     var phaseProgress = addonPtr->UldManager.NodeList[26]->GetAsAtkTextNode();
@@ -103,7 +103,7 @@ namespace Artisan
                             var phase = part.CompanyCraftProcess[phaseNum - 1];
 
                             FCWorkshopUI.CreatePhaseList(phase.Value!, part.CompanyCraftType.Value.Name.ExtractText(), phaseNum, false, null, project);
-                            Notify.Success("FC Workshop List Created");
+                            Notify.Success("部队工坊制作列表已创建");
                         }
                         else
                         {
@@ -116,13 +116,13 @@ namespace Artisan
                                 var phase = part.CompanyCraftProcess[phaseNum - 1];
 
                                 FCWorkshopUI.CreatePhaseList(phase.Value!, part.CompanyCraftType.Value.Name.ExtractText(), phaseNum, false, null, project);
-                                Notify.Success("FC Workshop List Created");
+                                Notify.Success("部队工坊制作列表已创建");
                             }
                         }
                     }
                 }
 
-                if (ImGui.Button("Create crafting list for this phase (including precrafts)"))
+                if (ImGui.Button("为该阶段创建制作列表 (包含前置配方)"))
                 {
                     var itemNameNode = addonPtr->UldManager.NodeList[37]->GetAsAtkTextNode();
                     var phaseProgress = addonPtr->UldManager.NodeList[26]->GetAsAtkTextNode();
@@ -138,7 +138,7 @@ namespace Artisan
                             var phase = part.CompanyCraftProcess[phaseNum - 1];
 
                             FCWorkshopUI.CreatePhaseList(phase.Value!, part.CompanyCraftType.Value.Name.ExtractText(), phaseNum, true, null, project);
-                            Notify.Success("FC Workshop List Created");
+                            Notify.Success("部队工坊制作列表已创建");
                         }
                         else
                         {
@@ -151,7 +151,7 @@ namespace Artisan
                                 var phase = part.CompanyCraftProcess[phaseNum - 1];
 
                                 FCWorkshopUI.CreatePhaseList(phase.Value!, part.CompanyCraftType.Value.Name.ExtractText(), phaseNum, true, null, project);
-                                Notify.Success("FC Workshop List Created");
+                                Notify.Success("部队工坊制作列表已创建");
                             }
                         }
                     }
@@ -247,27 +247,27 @@ namespace Artisan
 
         private static void DrawCopyOfCraftMenu()
         {
-            if (ImGuiEx.AddHeaderIcon("OpenConfig", FontAwesomeIcon.Cog, new ImGuiEx.HeaderIconOptions() { Tooltip = "Open Config" }))
+            if (ImGuiEx.AddHeaderIcon("OpenConfig", FontAwesomeIcon.Cog, new ImGuiEx.HeaderIconOptions() { Tooltip = "打开设置" }))
             {
                 P.PluginUi.IsOpen = true;
             }
 
             bool autoMode = Service.Configuration.AutoMode;
 
-            if (ImGui.Checkbox("Auto Mode", ref autoMode))
+            if (ImGui.Checkbox("自动制作模式", ref autoMode))
             {
                 Service.Configuration.AutoMode = autoMode;
                 Service.Configuration.Save();
             }
 
             bool enable = Handler.Enable;
-            if (ImGui.Checkbox("Endurance Mode Toggle", ref enable))
+            if (ImGui.Checkbox("自动重复制作", ref enable))
             {
                 Handler.Enable = enable;
             }
 
             bool macroMode = Service.Configuration.UseMacroMode;
-            if (ImGui.Checkbox("Macro Mode", ref macroMode))
+            if (ImGui.Checkbox("宏模式", ref macroMode))
             {
                 Service.Configuration.UseMacroMode = macroMode;
                 Service.Configuration.Save();
@@ -330,7 +330,7 @@ namespace Artisan
                 }
 
                 ImGui.Spacing();
-                ImGui.Text($"Use a macro for this recipe ({Handler.RecipeName})");
+                ImGui.Text($"为该配方使用宏 ({Handler.RecipeName})");
                 if (ImGui.BeginCombo("", preview))
                 {
                     if (ImGui.Selectable(""))
@@ -382,7 +382,7 @@ namespace Artisan
                 var size = new Vector2(node->Width, node->Height) * scale;
                 var center = new Vector2((position.X + size.X) / 2, (position.Y - size.Y) / 2);
                 //position += ImGuiHelpers.MainViewport.Pos;
-                var textHeight = ImGui.CalcTextSize("Craft X Times:");
+                var textHeight = ImGui.CalcTextSize("制作N次:");
 
                 ImGuiHelpers.ForceNextWindowMainViewport();
                 ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(position.X + (4f * scale.X), position.Y - textHeight.Y - (17f * scale.Y)));
@@ -402,7 +402,7 @@ namespace Artisan
                     | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoNavFocus
                     | ImGuiWindowFlags.AlwaysUseWindowPadding | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoSavedSettings);
 
-                ImGui.Text("Craft X Times:");
+                ImGui.Text("制作N次:");
                 ImGui.SameLine();
                 ImGui.PushItemWidth(110f.Scale() * scale.X);
                 if (ImGui.InputInt($"###TimesRepeat{node->NodeID}", ref Service.Configuration.CraftX))
@@ -414,7 +414,7 @@ namespace Artisan
                 ImGui.SameLine();
                 if (Service.Configuration.CraftX > 0)
                 {
-                    if (ImGui.Button($"Craft {Service.Configuration.CraftX}"))
+                    if (ImGui.Button($"制作 {Service.Configuration.CraftX} 次"))
                     {
                         Service.Configuration.CraftingX = true;
                         Handler.Enable = true;
@@ -422,7 +422,7 @@ namespace Artisan
                 }
                 else
                 {
-                    if (ImGui.Button("Craft All"))
+                    if (ImGui.Button("制作所有"))
                     {
                         Handler.Enable = true;
                     }

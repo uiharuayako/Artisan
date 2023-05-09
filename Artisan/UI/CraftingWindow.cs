@@ -58,14 +58,14 @@ namespace Artisan.UI
             if (!Service.Configuration.DisableHighlightedAction)
                 Hotbars.MakeButtonsGlow(CurrentRecommendation);
 
-            if (ImGuiEx.AddHeaderIcon("OpenConfig", FontAwesomeIcon.Cog, new ImGuiEx.HeaderIconOptions() { Tooltip = "Open Config" }))
+            if (ImGuiEx.AddHeaderIcon("OpenConfig", FontAwesomeIcon.Cog, new ImGuiEx.HeaderIconOptions() { Tooltip = "打开设置" }))
             {
                 P.PluginUi.IsOpen = true;
             }
 
             bool autoMode = Service.Configuration.AutoMode;
 
-            if (ImGui.Checkbox("Auto Mode", ref autoMode))
+            if (ImGui.Checkbox("自动制作模式", ref autoMode))
             {
                 Service.Configuration.AutoMode = autoMode;
                 Service.Configuration.Save();
@@ -75,7 +75,7 @@ namespace Artisan.UI
             {
                 var delay = Service.Configuration.AutoDelay;
                 ImGui.PushItemWidth(200);
-                if (ImGui.SliderInt("Set delay (ms)", ref delay, 0, 1000))
+                if (ImGui.SliderInt("执行间隔 (ms)", ref delay, 0, 1000))
                 {
                     if (delay < 0) delay = 0;
                     if (delay > 1000) delay = 1000;
@@ -89,7 +89,7 @@ namespace Artisan.UI
             if (Handler.RecipeID != 0 && !CraftingListUI.Processing)
             {
                 bool enable = Handler.Enable;
-                if (ImGui.Checkbox("Endurance Mode Toggle", ref enable))
+                if (ImGui.Checkbox("自动重复制作", ref enable))
                 {
                     Handler.Enable = enable;
                 }
@@ -97,7 +97,7 @@ namespace Artisan.UI
 
             if (Service.Configuration.CraftingX && Handler.Enable)
             {
-                ImGui.Text($"Remaining Crafts: {Service.Configuration.CraftX}");
+                ImGui.Text($"剩余制作次数: {Service.Configuration.CraftX}");
                 if (Service.Configuration.IndividualMacros.TryGetValue((uint)Handler.RecipeID, out var prevMacro) && prevMacro != null)
                 {
                     Macro? macro = Service.Configuration.IndividualMacros[(uint)Handler.RecipeID];
@@ -105,9 +105,9 @@ namespace Artisan.UI
                     {
                         Double timeInSeconds = ((MacroUI.GetMacroLength(macro) * Service.Configuration.CraftX) + (Service.Configuration.CraftX * 2)); // Counting crafting duration + 2 seconds between crafts.
                         TimeSpan t = TimeSpan.FromSeconds(timeInSeconds);
-                        string duration = string.Format("{0:D2}h {1:D2}m {2:D2}s", t.Hours, t.Minutes, t.Seconds);
+                        string duration = string.Format("{0:D2}小时 {1:D2}分 {2:D2}秒", t.Hours, t.Minutes, t.Seconds);
 
-                        ImGui.Text($"Approximate Remaining Duration: {duration}");
+                        ImGui.Text($"预计的剩余时间: {duration}");
                     }
                 }
             }
@@ -118,13 +118,13 @@ namespace Artisan.UI
 
             if (!Service.Configuration.AutoMode)
             {
-                ImGui.Text("Semi-Manual Mode");
+                ImGui.Text("半自动模式");
 
-                if (ImGui.Button("Execute recommended action"))
+                if (ImGui.Button("执行推荐的操作"))
                 {
                     Hotbars.ExecuteRecommended(CurrentRecommendation);
                 }
-                if (ImGui.Button("Fetch Recommendation"))
+                if (ImGui.Button("获取推荐"))
                 {
                     Artisan.FetchRecommendation(CurrentStep);
                 }
